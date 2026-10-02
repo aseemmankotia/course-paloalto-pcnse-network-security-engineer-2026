@@ -1,0 +1,16 @@
+## Chapter 1: Single-Pass Architecture and Packet Flow Fundamentals — Flashcards
+
+| # | Front (Question) | Back (Answer) |
+|---|-----------------|---------------|
+| 1 | PAN-OS packet flow order for a new (first-packet) session? | Ingress interface → Zone lookup → Session lookup (miss) → Policy lookup (initial) → App-ID → Content-ID → Forwarding lookup → Egress. Exam tip: session lookup happens before full App-ID identification; policy can be re-evaluated once App-ID is confirmed. |
+| 2 | Tap mode capabilities? | Visibility only — connects to a SPAN/mirror port. Cannot block, drop, or modify traffic. Exam tip: used for PoC/traffic visibility, never for enforcement. |
+| 3 | Virtual wire (vwire) mode key trait? | Binds two interfaces together; passes traffic transparently with no MAC/IP changes and no switching/routing. Supports VLAN-tagged subinterfaces for per-VLAN zone/policy. Exam tip: does NOT require IP addressing, unlike Layer 3. |
+| 4 | Layer 2 (vlan) deployment mode vs virtual wire? | Layer 2 mode: firewall acts as a switch, interfaces assigned to VLAN objects, performs MAC learning/ARP across multiple interfaces. Vwire: transparent point-to-point pass-through between exactly two interfaces, no switching table. Exam tip: L2 mode can switch between many interfaces/VLANs; vwire cannot. |
+| 5 | Layer 3 deployment requirement? | Interfaces need IP addresses and must be assigned to a virtual router. Exam tip: virtual router holds the RIB and supports static routes plus OSPF/BGP/RIP and ECMP configuration. |
+| 6 | Does security policy match on interface IP or zone? | Zone. Security policies match source/destination ZONE, not IP address. Exam tip: moving an interface to a new zone breaks rules referencing the old zone even though IP addressing is unchanged. |
+| 7 | Default TCP session timeout (PAN-OS)? | 3600 seconds (1 hour). Exam tip: compare UDP=30s, ICMP=6s, TCP handshake=10s, TCP half-closed=120s, TCP time-wait=15s. |
+| 8 | Default UDP session timeout (PAN-OS)? | 30 seconds. Exam tip: much shorter than TCP's 3600s default because UDP is connectionless. |
+| 9 | Default ICMP session timeout (PAN-OS)? | 6 seconds. Exam tip: memory trick — 'ICMP is quICk' (6 seconds), the shortest of the common protocol timeouts. |
+| 10 | What does 'SP3' (single-pass parallel processing) actually mean? | Single-pass = SOFTWARE design: packet parsed/classified once, all security functions act on that one classification. Parallel processing = HARDWARE design: dedicated data-plane processors handle networking, security, and content scanning simultaneously. Exam tip: these are two separate concepts often confused — one is software, one is hardware. |
+| 11 | Session table: fast path vs slow path processing? | Slow path = first packet, no session match, full zone/policy/NAT/App-ID lookup, session created. Fast path = subsequent packets match the existing 6-tuple session entry, skipping full policy lookup. Exam tip: App-ID may still need several more packets even on fast path before the application is fully identified. |
+| 12 | Default intrazone vs interzone security rule action? | intrazone-default = allow. interzone-default = deny. Exam tip: these implicit rules can be cloned into explicit visible rules and modified but cannot be deleted. |
